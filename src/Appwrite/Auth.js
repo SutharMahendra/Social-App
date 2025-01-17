@@ -1,7 +1,7 @@
-import { use } from "react";
+
 import conf from "../conf/conf";
 import { Client, Account, ID } from "appwrite";
-import { error } from "console";
+
 
 export class AuthService {
     client = new Client()
