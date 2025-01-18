@@ -40,7 +40,7 @@ export class BucketService {
 
     async getFilePreview(fileID) {
         try {
-            return await this.bucket.getFilePreview(
+            return await bucket.getFilePreview(
                 conf.appwriteBucketId,
                 fileID,
             )
