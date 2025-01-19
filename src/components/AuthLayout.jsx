@@ -14,6 +14,7 @@ function Protected({ children, authentication = true }) {
     const navigate = useNavigate()
 
     useEffect(() => {
+        // authentication : for the route restriction
         // If the route requires authentication, but the user is not logged in:
         if (authentication && !authStatus) {
             navigate("/login"); // Redirect to login page.
