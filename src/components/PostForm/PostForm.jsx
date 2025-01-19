@@ -133,10 +133,6 @@ function PostForm({ post }) {
 
             </div>
 
-
-
-
-
         </form>
 
 
