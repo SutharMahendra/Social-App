@@ -36,12 +36,20 @@ export class AuthService {
             console.log('error in login', error);
         }
     }
+
+
+
     async getCurrentUser() {
         try {
-            return await this.account.get();
+            const user = await this.account.get();
+            if (user) {
+                console.log('here is your user', user)
+                return user
+
+            }
         } catch (error) {
             console.log('error in get current user', error)
-            return null;
+            return 'user is not found';
         }
     }
 

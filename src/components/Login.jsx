@@ -1,109 +1,109 @@
-import React, { useState } from 'react'
-import { useForm } from 'react-hook-form'
-import authService from '../Appwrite/Auth'
-import { useDispatch } from 'react-redux'
-import { login as authLogin, login } from '../Feature/AuthSlice'
-import { useNavigate } from 'react-router-dom'
-import { Button, Logo, Input } from './index'
-
+import React, { useState } from 'react';
+import { useForm } from 'react-hook-form';
+import authService from '../Appwrite/Auth';
+import { useDispatch } from 'react-redux';
+import { login as authLogin } from '../Feature/AuthSlice';
+import { useNavigate, Link } from 'react-router-dom';
+import { Button, Logo, Input } from './index';
 
 function Login() {
-    // here handlesubmit is key word for the react hook form so we can not use it directly submit 
-    // we make other fucntion (login) and then pass that function as parameter in handlesubmit
-    const { register, handleSubmit } = useForm()
-    const [error, setError] = useState('')
+    const { register, handleSubmit } = useForm();
+    const [error, setError] = useState('');
 
-    const dispatch = useDispatch()
-    const navigate = useNavigate()
+    const dispatch = useDispatch();
+    const navigate = useNavigate();
 
     const handleLogin = async (data) => {
-
         try {
-            setError('')
-            const session = await authService.login(data)
+            setError('');
+            const session = await authService.login(data);
             if (session) {
-                const userData = await authService.getCurrentUser()
+                const userData = await authService.getCurrentUser();
                 if (userData) {
-                    dispatch(authLogin(userData))
-                    navigate('/')
+                    dispatch(authLogin(userData));
+                    navigate('/');
                 }
-
             }
-
         } catch (error) {
-            setError(error.message || 'somthing went wront try again!!')
+            setError(error.message || 'Something went wrong, please try again!');
         }
-    }
+    };
 
     return (
-        <div
-            className='flex items-center justify-center w-full'>
-            <div className='mx-auto w-full max-w-lg bg-gray-100 rounded-xl p-10 border border-black/50'>
-                {/*it's  logo section */}
-                <span className='inline-block w-full max-w-[100px]'>
-                    <Logo width='100%' />
-                </span>
-
-            </div>
-            <h2 className="text-center text-2xl font-bold leading-tight">Sign in to your account</h2>
-            {/* it ask you to have account or not (if not then sign up) */}
-            <p>
-                Don't have account?{''}
-                <Link
-                    to='/signup'
-                    className='font-medium text-primary transition-all duration-200 hover:underline hover:text-xl'
-                >
-                    Sign Up
-                </Link>
-            </p>
-            {/* this type of all syntax is for error handling  */}
-            {error && <p className='text-red-600 mt-8 text-center'>{error}</p>}
-
-            {/* form for login is start form below */}
-            <form onSubmit={handleSubmit(handleLogin)}>
-                <div className='space-y-5'>
-                    {/* Email input section */}
-                    <Input
-                        label='Email:'
-                        placeholder='enter your email'
-                        type='email'
-                        {...register('email', {
-                            required: 'email is required',
-                            validate: {
-                                matchPattern: (value) =>
-                                    /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/.test(value) ||
-                                    "Invalid email address",
-                            }
-
-                        })}
-                    />
-                    {error.email && <p className='text-red-600 mt-8 text-center'>{error.email.message}</p>}
-
-                    {/* password input section */}
-                    <Input
-                        type='password'
-                        label='Password:'
-                        placeholder='Enter Password'
-                        {...register('password', {
-                            required: 'password is required'
-                        })}
-                    />
-                    {error.password && <p className='text-red-600 mt-8 text-center'>{error.password.message}</p>}
-
-                    <Button
-                        type='submit'
-                        className='w-full'
-                    >
-                        Sign in
-                    </Button>
+        <div className="flex items-center justify-center min-h-screen bg-gray-50">
+            <div className="w-full max-w-md bg-white rounded-lg shadow-lg p-8">
+                {/* Logo Section */}
+                <div className="mb-6 flex justify-center">
+                    <span className="inline-block max-w-[100px]">
+                        <Logo width="100%" />
+                    </span>
                 </div>
+                <h2 className="text-2xl font-bold text-center text-gray-800">Sign in to your account</h2>
+                <p className="mt-2 text-center text-sm text-gray-600">
+                    Don't have an account?{' '}
+                    <Link
+                        to="/signup"
+                        className="font-medium text-primary hover:underline hover:text-primary-dark"
+                    >
+                        Sign Up
+                    </Link>
+                </p>
 
+                {/* Error Message */}
+                {error && <p className="text-red-600 mt-4 text-center">{error}</p>}
 
-            </form>
+                {/* Login Form */}
+                <form onSubmit={handleSubmit(handleLogin)} className="mt-6 space-y-6">
+                    {/* Email Input */}
+                    <div>
+                        <Input
+                            label="Email"
+                            placeholder="Enter your email"
+                            type="email"
+                            {...register('email', {
+                                required: 'Email is required',
+                                validate: {
+                                    matchPattern: (value) =>
+                                        /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/.test(value) ||
+                                        'Invalid email address',
+                                },
+                            })}
+                            autoComplete='email'
+                        />
+                        {error.email && (
+                            <p className="text-red-500 text-sm mt-1">{error.email.message}</p>
+                        )}
+                    </div>
 
+                    {/* Password Input */}
+                    <div>
+                        <Input
+                            type="password"
+                            label="Password"
+                            placeholder="Enter your password"
+                            {...register('password', {
+                                required: 'Password is required',
+                            })}
+                            autoComplete='current-password'
+                        />
+                        {error.password && (
+                            <p className="text-red-500 text-sm mt-1">{error.password.message}</p>
+                        )}
+                    </div>
 
+                    {/* Submit Button */}
+                    <div>
+                        <Button
+                            type="submit"
+                            className="w-full py-3 bg-primary text-white rounded-lg hover:bg-primary-dark transition"
+                        >
+                            Sign in
+                        </Button>
+                    </div>
+                </form>
+            </div>
         </div>
-    )
+    );
 }
 
-export default Login
+export default Login;

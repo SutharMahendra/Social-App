@@ -1,5 +1,5 @@
 
-import { Login as Logincomponent } from '../components/Login'
+import { Login as Logincomponent } from '../components'
 
 function Login() {
     return (

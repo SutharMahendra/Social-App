@@ -1,4 +1,4 @@
-import './components/index'
+
 import authService from './Appwrite/Auth'
 import { useEffect, useState } from 'react'
 import { useDispatch } from 'react-redux'
@@ -27,7 +27,7 @@ function App() {
     <div>
       <Header />
       <main>
-        Todo: <Outlet />
+        <Outlet />
       </main>
       <Footer />
     </div>
