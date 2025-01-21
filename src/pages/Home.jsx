@@ -8,8 +8,10 @@ function Home() {
     useEffect(() => {
         const fetchPosts = async () => {
             try {
+                console.log('Fetching posts...');
                 const dbPosts = await dbservice.getPosts([]);
                 if (dbPosts) {
+                    console.log("Fetched posts:", dbPosts);
                     setPosts(dbPosts.documents);
                 }
             } catch (error) {
@@ -20,33 +22,39 @@ function Home() {
         fetchPosts();
     }, []);
 
-    if (posts.length === 0) {
-        return (
-            <div className="w-full py-8 mt-4 text-center">
-                <Container>
-                    <div>
-                        <h1 className="text-lg font-bold text-gray-800">
-                            Login to read posts
+    return (
+        <div className="py-8 min-h-screen bg-gray-100">
+            <Container>
+                {/* Conditional Rendering */}
+                {posts.length === 0 ? (
+                    <div className="text-center mt-10">
+                        <h1 className="text-2xl font-bold text-gray-800 mb-4">
+                            No Posts Found
                         </h1>
+                        <p className="text-gray-600">
+                            Please log in or check back later to view posts.
+                        </p>
                     </div>
-                </Container>
-            </div>
-        );
-    } else {
-        return (
-            <div className="py-8">
-                <Container>
-                    <div className="flex flex-wrap gap-4">
-                        {posts.map((post) => (
-                            <div key={post.$id} className="w-full md:w-1/2 lg:w-1/3">
-                                <PostCard {...post} />
-                            </div>
-                        ))}
+                ) : (
+                    <div>
+                        <h1 className="text-3xl font-bold text-gray-800 text-center mb-8">
+                            Latest Posts
+                        </h1>
+                        <div className="flex flex-wrap gap-6">
+                            {posts.map((post) => (
+                                <div
+                                    key={post.$id}
+                                    className="w-full md:w-1/2 lg:w-1/3 xl:w-1/4"
+                                >
+                                    <PostCard {...post} />
+                                </div>
+                            ))}
+                        </div>
                     </div>
-                </Container>
-            </div>
-        );
-    }
+                )}
+            </Container>
+        </div>
+    );
 }
 
 export default Home;

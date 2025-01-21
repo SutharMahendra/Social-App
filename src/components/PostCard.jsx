@@ -1,29 +1,47 @@
-import React from 'react'
-import appwriteService from '../Appwrite/Bucket'
-import { Link } from 'react-router-dom'
+import React, { useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
+import bucketService from '../Appwrite/Bucket';
 
-// here $id is appwrite props and it's syntax so that why we write $id instead of id
-// and this id is for whole card
 function PostCard({ $id, title, featuredImage }) {
-    return (
-        <Link to={`/post/${$id}`}>
-            <div className='w-full bg-gray-100 rounded-xl p-4'>
-                <div>
+    const [imageUrl, setImageUrl] = useState(null);
 
-                    {/* here we requied featured image url and that url we get from appwriteService */}
+    useEffect(() => {
+        const fetchUrl = async () => {
+            try {
+                const url = await bucketService.getFilePreview(featuredImage);
+                if (url) {
+                    setImageUrl(url);
+                }
+            } catch (error) {
+                console.log('Failed to get image URL:', error);
+            }
+        };
+
+        fetchUrl();
+    }, [featuredImage]);
+
+    return (
+        <Link to={`/post/${$id}`} className="block group">
+            <div className="w-full bg-white rounded-xl shadow-lg hover:shadow-2xl transition-shadow duration-300">
+                {/* Image Section */}
+                <div className="overflow-hidden rounded-t-xl">
                     <img
-                        src={appwriteService.getFilePreview(featuredImage)}
+                        src={imageUrl || 'https://via.placeholder.com/400'} // Placeholder for missing images
                         alt={title}
-                        className='rounded-xl' />
+                        className="object-cover w-fit h-48 group-hover:scale-105 transition-transform duration-300"
+                    />
                 </div>
-                <h2
-                    className='text-xl font-bold'
-                >
-                    {title}
-                </h2>
+                {/* Title Section */}
+                <div className="p-4">
+                    <h2
+                        className="text-lg font-bold text-gray-800 group-hover:text-blue-600 transition-colors duration-300"
+                    >
+                        {title}
+                    </h2>
+                </div>
             </div>
         </Link>
-    )
+    );
 }
 
-export default PostCard
+export default PostCard;

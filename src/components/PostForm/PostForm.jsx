@@ -6,6 +6,7 @@ import { useNavigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import { Button, Input, RTE, Select } from '../index';
 
+
 function PostForm({ post }) {
     const { register, handleSubmit, setValue, watch, control, getValues } = useForm({
         defaultValues: {
@@ -20,31 +21,49 @@ function PostForm({ post }) {
     const userData = useSelector((state) => state.userData);
 
     const submit = async (data) => {
-        if (post) {
-            const newFile = data.image[0] ? await bucketService.createFile(data.image[0]) : null;
-            if (newFile) {
-                bucketService.deleteFile(post.featuredImage);
+        try {
+            // Safely check if image is present
+            console.log('before image file');
+
+            const imageFile = data.image && data.image[0];
+            let newFile = null;
+            console.log('your image:', imageFile)
+            if (imageFile) {
+                newFile = await bucketService.createFile(imageFile); // Upload the file
             }
-            const dbPost = await dbservice.updatePost({
-                ...data,
-                featuredImage: newFile ? newFile.$id : undefined,
-            });
-            if (dbPost) {
-                navigate(`/post/${dbPost.$id}`);
-            }
-        } else {
-            const newFile = await bucketService.createFile(data.image[0]);
-            if (newFile) {
-                const fileId = newFile.$id;
-                data.featuredImage = fileId;
+
+            if (post) {
+                // If it's an update
+                if (newFile) {
+                    bucketService.deleteFile(post.featuredImage); // Delete old file
+                }
+
+                const dbPost = await dbservice.updatePost({
+                    ...data,
+                    featuredImage: newFile ? newFile.$id : post.featuredImage, // Use new file ID or existing featuredImage
+                });
+
+                if (dbPost) {
+                    navigate(`/post/${dbPost.$id}`);
+                }
+            } else {
+                // If it's a new post
+                if (newFile) {
+                    const fileId = newFile.$id;
+                    data.featuredImage = fileId; // Assign file ID to featuredImage
+                }
+
                 const dbPost = await dbservice.createPost({ ...data, userId: userData.$id });
 
                 if (dbPost) {
                     navigate(`/post/${dbPost.$id}`);
                 }
             }
+        } catch (error) {
+            console.error("Error submitting post:", error);
         }
     };
+
 
     const slugTransform = useCallback((value) => {
         if (value && typeof value === 'string') {
@@ -63,6 +82,7 @@ function PostForm({ post }) {
                 setValue('slug', slugTransform(value.title), { shouldValidate: true });
             }
         });
+        return () => subscription.unsubscribe();
     }, [watch, slugTransform, setValue]);
 
     return (
@@ -79,19 +99,21 @@ function PostForm({ post }) {
                     type="text"
                     {...register('title', { required: true })}
                     className="w-full text-black"
+
                 />
 
                 {/* Slug Section */}
                 <Input
                     label="Slug"
-                    placeholder="Slug"
+                    placeholder='Slug'
                     className="w-full text-black"
-                    onInput={(e) =>
+                    {...register('slug', { required: true })}
+                    onInput={(e) => {
                         setValue('slug', slugTransform(e.currentTarget.value), {
                             shouldValidate: true,
                         })
                     }
-                    {...register('slug', { required: true })}
+                    }
                 />
 
                 {/* Editor Section */}
@@ -107,13 +129,25 @@ function PostForm({ post }) {
             {/* Right Section */}
             <div className="w-1/3 px-2 space-y-6">
                 {/* Image Preview Section */}
-                {post && (
+                {post ? (
                     <div className="w-full">
                         <img
                             src={bucketService.getFilePreview(post.featuredImage)}
                             alt={post.title}
                             className="rounded-lg w-full h-auto border border-gray-300"
                         />
+                    </div>
+                ) : (
+                    <div>
+                        <Input
+                            label='featured Image'
+                            type='file'
+                            placeholder='select file'
+                            accept='image/png, image/jpg, image/jpeg, image/gif'
+                            {...register('image', { required: 'image preview' })}
+
+                        />
+
                     </div>
                 )}
 
@@ -125,7 +159,7 @@ function PostForm({ post }) {
                     label='Status'
                     className='mb-4'
                     {...register('status', {
-                        required: true
+                        required: true,
                     })}
                 />
 

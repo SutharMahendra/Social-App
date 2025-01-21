@@ -2,26 +2,28 @@ import conf from "../conf/conf";
 import { Client, ID, Storage } from "appwrite";
 
 export class BucketService {
-    client = new Client()
-    bucket
+    client = new Client();
+    bucket;
+
     constructor() {
         this.client
             .setEndpoint(conf.appwriteUrl)
             .setProject(conf.appwriteProjectId)
 
-        this.bucket = new Storage();
+        this.bucket = new Storage(this.client);
     }
 
     async createFile(file) {
         try {
+            console.log('stating')
             return await this.bucket.createFile(
                 conf.appwriteBucketId,
                 ID.unique(),
-                file,
+                file
 
             )
         } catch (error) {
-            console.log("Appwrite serive :: createPost :: error", error);
+            console.log("Appwrite serive :: createPost :: error is here", error);
             return false
         }
     }
@@ -40,7 +42,7 @@ export class BucketService {
 
     async getFilePreview(fileID) {
         try {
-            return await bucket.getFilePreview(
+            return this.bucket.getFilePreview(
                 conf.appwriteBucketId,
                 fileID,
             )

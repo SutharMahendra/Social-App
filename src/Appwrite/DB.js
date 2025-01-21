@@ -5,7 +5,7 @@ import { Client, Databases, Query } from "appwrite";
 export class DBService {
 
     client = new Client()
-    databases
+    databases;
 
     constructor() {
         this.client
@@ -16,7 +16,7 @@ export class DBService {
     }
 
 
-    async createPost({ title, slug, content, featureImage, status, userId }) {
+    async createPost({ title, slug, content, featuredImage, status, userId }) {
         try {
             return await this.databases.createDocument(
                 conf.appwriteDatabaseId,
@@ -25,7 +25,7 @@ export class DBService {
                 {
                     title,
                     content,
-                    featureImage,
+                    featuredImage,
                     status,
                     userId,
                 }
@@ -35,7 +35,7 @@ export class DBService {
         }
     }
 
-    async updatePost({ title, slug, featureImage, userId, status, content }) {
+    async updatePost({ title, slug, content, featuredImage, status }) {
         try {
             return await this.databases.updateDocument(
                 conf.appwriteDatabaseId,
@@ -44,9 +44,9 @@ export class DBService {
                 {
                     title,
                     content,
-                    featureImage,
+                    featuredImage,
                     status,
-                    userId,
+
                 }
             )
         } catch (error) {

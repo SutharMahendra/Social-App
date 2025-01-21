@@ -21,7 +21,7 @@ const Input = forwardRef(
                 }
                 <input
                     type={type}
-                    className={`px-3 py-1 rounded-lg bg-white text-white outline-none focus:bg-gray-500 duration-200 border border-gray-200 w-full ${className}`}
+                    className={`px-3 py-1 rounded-lg bg-white  outline-none focus:bg-gray-500 focus:text-white duration-200 border border-gray-200 w-full ${className}`}
                     ref={ref}
                     {...props}
                     id={id}
