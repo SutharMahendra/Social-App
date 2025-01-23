@@ -22,13 +22,13 @@ function PostCard({ $id, title, featuredImage }) {
 
     return (
         <Link to={`/post/${$id}`} className="block group">
-            <div className="w-full bg-white rounded-xl shadow-lg hover:shadow-2xl transition-shadow duration-300">
+            <div className="w-full  bg-white rounded-xl shadow-lg hover:shadow-2xl transition-shadow duration-300">
                 {/* Image Section */}
                 <div className="overflow-hidden rounded-t-xl">
                     <img
                         src={imageUrl || 'https://via.placeholder.com/400'} // Placeholder for missing images
                         alt={title}
-                        className="object-cover w-fit h-48 group-hover:scale-105 transition-transform duration-300"
+                        className="object-cover w-full h-96 group-hover:scale-105 transition-transform duration-300"
                     />
                 </div>
                 {/* Title Section */}

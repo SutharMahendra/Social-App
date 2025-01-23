@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import bucketService from '../../Appwrite/Bucket';
 import dbservice from '../../Appwrite/DB';
@@ -16,6 +16,8 @@ function PostForm({ post }) {
             status: post?.status || 'active',
         },
     });
+
+    const [imagePreview, setImagePreview] = useState(null)
 
     const navigate = useNavigate();
     const userData = useSelector((state) => state.userData);
@@ -85,6 +87,8 @@ function PostForm({ post }) {
         return () => subscription.unsubscribe();
     }, [watch, slugTransform, setValue]);
 
+
+
     return (
         <form
             onSubmit={handleSubmit(submit)}
@@ -96,7 +100,6 @@ function PostForm({ post }) {
                 <Input
                     label="Title:"
                     placeholder="Enter your title"
-                    type="text"
                     {...register('title', { required: true })}
                     className="w-full text-black"
 
@@ -129,7 +132,18 @@ function PostForm({ post }) {
             {/* Right Section */}
             <div className="w-1/3 px-2 space-y-6">
                 {/* Image Preview Section */}
-                {post ? (
+                <div>
+                    <Input
+                        label='featured Image'
+                        type='file'
+                        placeholder='select file'
+                        accept='image/png, image/jpg, image/jpeg, image/gif'
+                        {...register('image', { required: 'image preview' })}
+
+                    />
+
+                </div>
+                {post && (
                     <div className="w-full">
                         <img
                             src={bucketService.getFilePreview(post.featuredImage)}
@@ -137,19 +151,8 @@ function PostForm({ post }) {
                             className="rounded-lg w-full h-auto border border-gray-300"
                         />
                     </div>
-                ) : (
-                    <div>
-                        <Input
-                            label='featured Image'
-                            type='file'
-                            placeholder='select file'
-                            accept='image/png, image/jpg, image/jpeg, image/gif'
-                            {...register('image', { required: 'image preview' })}
-
-                        />
-
-                    </div>
                 )}
+
 
 
                 {/* Status Select */}
