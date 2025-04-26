@@ -1,5 +1,5 @@
-import test from 'node:test'
 import React from 'react'
+import './Button.css';
 
 // this is common purpose button
 // if we required button then we can not create button manually 
@@ -8,6 +8,7 @@ import React from 'react'
 
 function Button({
     children,
+    id,
     type = 'button',
     bgColor = 'bg-blue-600',
     textColor = 'text-white',
@@ -20,6 +21,7 @@ function Button({
         <button
             type={type}
             className={`px-4, py-2 rounded-lg ${bgColor} ${className} ${textColor} `}
+            id={id}
             {...props}
         >
             {children}

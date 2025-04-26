@@ -4,8 +4,10 @@ import dbservice from '../Appwrite/DB';
 
 function Allposts() {
     const [posts, setPosts] = useState([]);
-    const [scrollPosition, setScrollPosition] = useState(0);
     const scrollRef = useRef(null);
+
+    const POST_HEIGHT = 450; // Post height
+    const GAP = 32;           // Gap between posts
 
     useEffect(() => {
         const fetchPosts = async () => {
@@ -22,27 +24,44 @@ function Allposts() {
         fetchPosts();
     }, []);
 
-    const scrollLeft = () => {
+    const scrollUp = () => {
         if (scrollRef.current) {
-            const newScrollPosition = Math.max(scrollPosition - 1, 0);
-            setScrollPosition(newScrollPosition);
-            scrollRef.current.scrollTo({
-                left: newScrollPosition * scrollRef.current.offsetWidth / 3,
+            scrollRef.current.scrollBy({
+                top: -(POST_HEIGHT + GAP),
                 behavior: 'smooth',
             });
         }
     };
 
-    const scrollRight = () => {
-        if (scrollRef.current && posts.length) {
-            const newScrollPosition = Math.min(scrollPosition + 1, posts.length - 3);
-            setScrollPosition(newScrollPosition);
-            scrollRef.current.scrollTo({
-                left: newScrollPosition * scrollRef.current.offsetWidth / 3,
+    const scrollDown = () => {
+        if (scrollRef.current) {
+            scrollRef.current.scrollBy({
+                top: POST_HEIGHT + GAP,
                 behavior: 'smooth',
             });
         }
     };
+
+    // Handle Keyboard Arrows
+    useEffect(() => {
+        const handleKeyDown = (e) => {
+            if (e.key === 'ArrowUp') {
+                e.preventDefault();
+                scrollUp();
+            }
+            if (e.key === 'ArrowDown') {
+                e.preventDefault();
+                scrollDown();
+            }
+        };
+
+        window.addEventListener('keydown', handleKeyDown);
+
+        // Cleanup on unmount
+        return () => {
+            window.removeEventListener('keydown', handleKeyDown);
+        };
+    }, []);
 
     return (
         <div className="py-8 min-h-screen bg-gray-100">
@@ -61,52 +80,39 @@ function Allposts() {
                         </h1>
 
                         {/* Scrollable Section */}
-                        <div className="relative">
-                            {/* Left Button */}
+                        <div className="relative h-[600px] overflow-hidden">
+
+                            {/* Up Button */}
                             <button
-                                className="absolute left-0 top-1/2 transform -translate-y-1/2 
-                                bg-gray-800 text-white p-4 rounded-full shadow-md hover:bg-gray-700 z-10"
-                                onClick={scrollLeft}
+                                className="absolute left-1/2 -translate-x-1/2 top-2 transform bg-gray-800 text-white p-3 rounded-full shadow-md hover:bg-gray-700 z-10"
+                                onClick={scrollUp}
                             >
-                                &larr;
+                                ↑
                             </button>
 
                             {/* Posts Wrapper */}
                             <div
-                                className="flex overflow-hidden gap-8 py-4 px-2 scrollbar-hide scroll-smooth"
                                 ref={scrollRef}
-                                style={{
-                                    width: '100%',
-                                    transform: `translateX(-${scrollPosition * 33.33}%)`,
-                                }}
+                                className="flex flex-col items-center gap-8 py-20 px-2 overflow-y-scroll scrollbar-hide scroll-smooth h-full"
                             >
-                                {posts.map((post, index) => {
-                                    const isCenter = index === scrollPosition + 1;
-                                    return (
-                                        <div
-                                            key={post.$id}
-                                            className={`transition-all duration-500 ease-in-out transform 
-                                            ${isCenter ? 'scale-100 opacity-100' : 'scale-90 opacity-50 blur-sm'}
-                                            flex-shrink-0 w-1/3`}
-                                            style={{
-                                                height: '500px', // Increased height
-                                                perspective: '1000px',
-                                            }}
-                                        >
-                                            <PostCard {...post} />
-                                        </div>
-                                    );
-                                })}
+                                {posts.map((post) => (
+                                    <div
+                                        key={post.$id}
+                                        className="w-[300px] h-[450px] flex-shrink-0 transition-all duration-300 mx-auto"
+                                    >
+                                        <PostCard {...post} />
+                                    </div>
+                                ))}
                             </div>
 
-                            {/* Right Button */}
+                            {/* Down Button */}
                             <button
-                                className="absolute right-0 top-1/2 transform -translate-y-1/2 
-                                bg-gray-800 text-white p-4 rounded-full shadow-md hover:bg-gray-700 z-10"
-                                onClick={scrollRight}
+                                className="absolute left-1/2 -translate-x-1/2 bottom-2 transform bg-gray-800 text-white p-3 rounded-full shadow-md hover:bg-gray-700 z-10"
+                                onClick={scrollDown}
                             >
-                                &rarr;
+                                ↓
                             </button>
+
                         </div>
                     </div>
                 )}

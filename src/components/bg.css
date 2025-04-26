@@ -1,0 +1,5 @@
+.shared-bg {
+    background-image: url('../image/image.png');
+    background-size: cover;
+    background-position: center;
+}

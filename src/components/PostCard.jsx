@@ -10,6 +10,7 @@ function PostCard({ $id, title, featuredImage }) {
             try {
                 const url = await bucketService.getFilePreview(featuredImage);
                 if (url) {
+                    console.log("i got your  image url", featuredImage);
                     setImageUrl(url);
                 }
             } catch (error) {

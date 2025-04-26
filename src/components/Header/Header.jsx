@@ -2,6 +2,7 @@ import React from 'react';
 import { useSelector } from 'react-redux';
 import { Link, NavLink, useNavigate } from 'react-router-dom';
 import { Container, Logo, LogoutBtn } from '../index';
+import '../bg.css';
 
 function Header() {
     const authStatus = useSelector((state) => state.status);
@@ -16,7 +17,7 @@ function Header() {
     ];
 
     return (
-        <header className="py-4 shadow-md ">
+        <header className="py-4 shadow-md shared-bg ">
             <Container>
                 <nav className="flex items-center justify-between">
                     {/* Logo Section */}
